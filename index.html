@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>PiuPiuwer</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <header id="main-header">
+            <div class="content">
+                <img src="images/PiuPiuwerLogo.svg" alt="logo" class="logo" />
+                <input type="text" placeholder="Buscar" />
+                <ul>
+                    <li>
+                        <img src="images/Home.svg" alt="Home" class="navIcon" />
+                        <img
+                            src="images/IconLine.svg"
+                            alt="-"
+                            class="line"
+                            id="lineHome"
+                        />
+                    </li>
+                    <li>
+                        <img
+                            src="images/MsgHeader.svg"
+                            alt="Msg"
+                            class="navIcon"
+                        />
+                        <img
+                            src="images/IconLine.svg"
+                            alt="-"
+                            class="line"
+                            id="lineMsg"
+                        />
+                    </li>
+                    <li>
+                        <img
+                            src="images/Profile.svg"
+                            alt="Profile"
+                            class="navIcon"
+                        />
+                        <img
+                            src="images/IconLine.svg"
+                            alt="-"
+                            class="line"
+                            id="lineProfile"
+                        />
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <div id="wrapper">
+            <div id="left">
+                <h2 class="sectionTitle">Filtros</h2>
+                <div class="buttons">
+                    <!-- a: Ascending, d: Descending -->
+                    <button>
+                        <img src="images/Bookmark.svg" alt="" />
+                        <p>Favorites</p>
+                    </button>
+                    <button>
+                        <img src="images/A-_Z.svg" alt="" />Username
+                    </button>
+                    <button>
+                        <img src="images/A_-Z.svg" alt="" />Username
+                    </button>
+                    <button>
+                        <img src="images/1-_9.svg" alt="" />Character Count
+                    </button>
+                    <button>
+                        <img src="images/1_-9.svg" alt="" />Character Count
+                    </button>
+                    <button>Clear</button>
+                </div>
+            </div>
+            <div id="middle">
+                <div class="createPiu">
+                    <h2>Criar um Piu</h2>
+                    <div class="textBox">
+                        <textarea
+                            type="text"
+                            wrap="hard"
+                            placeholder="Texto"
+                        ></textarea>
+                        <div class="textInfo">
+                            <h3 class="wordCount">0/120</h3>
+                            <img
+                                src="images/Divisor.svg"
+                                alt=""
+                                class="divisor"
+                            />
+                            <div class="wrapperBottom">
+                                <div class="textIcons">
+                                    <img src="images/Img.svg" alt="Add Imgs" />
+                                    <img src="images/GIF.svg" alt="Add GIFs" />
+                                    <img
+                                        src="images/Emoji.svg"
+                                        alt="Add Emojis"
+                                    />
+                                </div>
+                                <button>Postar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pius">
+                    <div class="piu">
+                        <div class="user">
+                            <img
+                                src="images/UserAvatar.png"
+                                alt=""
+                                class="avatar"
+                            />
+                            <p class="username">@tiagoml</p>
+                        </div>
+                        <div class="piuBox">
+                            <p class="piuText">
+                                Lorem ipsum dolor sit amet, consectetur
+                                adipiscing elit. Risus leo in maecenas morbi.
+                                Tellus faucibus tincidunt faecibus diam varius
+                                turpis malesuada non. Elit ac fusce eget
+                                suspendisse tellus orci.
+                            </p>
+                            <div class="reactions">
+                                <div class="likeData">
+                                    <img
+                                        src="images/Likes.svg"
+                                        alt="like"
+                                        class="reactionIcon"
+                                    />
+                                    <p class="amount">271</p>
+                                </div>
+                                <img
+                                    src="images/BookmarkMsg.svg"
+                                    alt="comment"
+                                    class="reactionIcon"
+                                />
+                                <img
+                                    src="images/Share.svg"
+                                    alt="share"
+                                    class="reactionIcon"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="piu">
+                        <div class="user">
+                            <img
+                                src="images/UserAvatar.png"
+                                alt=""
+                                class="avatar"
+                            />
+                            <p class="username">@tiagoml</p>
+                        </div>
+                        <div class="piuBox">
+                            <p class="piuText">
+                                Lorem ipsum dolor sit amet, consectetur
+                                adipiscing elit. Risus leo in maecenas morbi.
+                                Tellus faucibus tincidunt faecibus diam varius
+                                turpis malesuada non. Elit ac fusce eget
+                                suspendisse tellus orci.
+                            </p>
+                            <div class="reactions">
+                                <div class="likeData">
+                                    <img
+                                        src="images/Likes.svg"
+                                        alt="like"
+                                        class="reactionIcon"
+                                    />
+                                    <p class="amount">271</p>
+                                </div>
+                                <img
+                                    src="images/BookmarkMsg.svg"
+                                    alt="comment"
+                                    class="reactionIcon"
+                                />
+                                <img
+                                    src="images/Share.svg"
+                                    alt="share"
+                                    class="reactionIcon"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="piu">
+                        <div class="user">
+                            <img
+                                src="images/UserAvatar.png"
+                                alt=""
+                                class="avatar"
+                            />
+                            <p class="username">@tiagoml</p>
+                        </div>
+                        <div class="piuBox">
+                            <p class="piuText">
+                                Lorem ipsum dolor sit amet, consectetur
+                                adipiscing elit. Risus leo in maecenas morbi.
+                                Tellus faucibus tincidunt faecibus diam varius
+                                turpis malesuada non. Elit ac fusce eget
+                                suspendisse tellus orci.
+                            </p>
+                            <div class="reactions">
+                                <div class="likeData">
+                                    <img
+                                        src="images/Likes.svg"
+                                        alt="like"
+                                        class="reactionIcon"
+                                    />
+                                    <p class="amount">271</p>
+                                </div>
+                                <img
+                                    src="images/BookmarkMsg.svg"
+                                    alt="comment"
+                                    class="reactionIcon"
+                                />
+                                <img
+                                    src="images/Share.svg"
+                                    alt="share"
+                                    class="reactionIcon"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="piu">
+                        <div class="user">
+                            <img
+                                src="images/UserAvatar.png"
+                                alt=""
+                                class="avatar"
+                            />
+                            <p class="username">@tiagoml</p>
+                        </div>
+                        <div class="piuBox">
+                            <p class="piuText">
+                                Lorem ipsum dolor sit amet, consectetur
+                                adipiscing elit. Risus leo in maecenas morbi.
+                                Tellus faucibus tincidunt faecibus diam varius
+                                turpis malesuada non. Elit ac fusce eget
+                                suspendisse tellus orci.
+                            </p>
+                            <div class="reactions">
+                                <div class="likeData">
+                                    <img
+                                        src="images/Likes.svg"
+                                        alt="like"
+                                        class="reactionIcon"
+                                    />
+                                    <p class="amount">271</p>
+                                </div>
+                                <img
+                                    src="images/BookmarkMsg.svg"
+                                    alt="comment"
+                                    class="reactionIcon"
+                                />
+                                <img
+                                    src="images/Share.svg"
+                                    alt="share"
+                                    class="reactionIcon"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="right">
+                <h2 class="sectionTitle">Usuários</h2>
+                <ul>
+                    <li>
+                        <img
+                            src="images/UserAvatar.png"
+                            alt=""
+                            class="avatar"
+                        />
+                        <div class="nameAndUser">
+                            <p class="name">Tiago M Lucio</p>
+                            <p class="username">@tiagoml</p>
+                        </div>
+                        <button>Follow</button>
+                    </li>
+                    <li>
+                        <img
+                            src="images/UserAvatar.png"
+                            alt=""
+                            class="avatar"
+                        />
+                        <div class="nameAndUser">
+                            <p class="name">Tiago M Lucio</p>
+                            <p class="username">@tiagoml</p>
+                        </div>
+                        <button>Follow</button>
+                    </li>
+                    <li>
+                        <img
+                            src="images/UserAvatar.png"
+                            alt=""
+                            class="avatar"
+                        />
+                        <div class="nameAndUser">
+                            <p class="name">Tiago M Lucio</p>
+                            <p class="username">@tiagoml</p>
+                        </div>
+                        <button>Follow</button>
+                    </li>
+                    <li>
+                        <img
+                            src="images/UserAvatar.png"
+                            alt=""
+                            class="avatar"
+                        />
+                        <div class="nameAndUser">
+                            <p class="name">Tiago M Lucio</p>
+                            <p class="username">@tiagoml</p>
+                        </div>
+                        <button>Follow</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,6 @@
+1. Alinhar caixa de pesquisa no centro do header
+2. Alinhar textos dos botões dos filtros no centro
+3. Tirar Highlight da textarea quando selecionada
+4. Alinhas Reações com base no número de curtidas (sobreposição de divs?)
+5. Tamanho variável do #right com a quantidade de usuários (talvez para o #left tb)
+6. Overflow no #wrapper
