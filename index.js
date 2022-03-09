@@ -6,20 +6,68 @@ async function getData() {
 
     const data = await response.json();
 
-    const users = setUsers(data);
+    const wrapper = document.getElementById('wrapper');
+    const extraLeft = document.getElementById('extraLeft');
+    const left = document.getElementById('left');
+    const middle = document.getElementById('middle');
+    const right = document.createElement('div');
+    right.id = 'right';
 
-    const msgs = getMsgs(data);
+    right.innerHTML = `            
+    <h2 class="sectionTitle">Usuários</h2>
+    <ul id="userList">
+    </ul>`;
 
-    const msgList = document.getElementById('pius');
+    wrapper.append(right);
+
+    function setUserWrapper() {
+        (window.innerWidth < 1260 ? extraLeft : wrapper).append(right);
+        middle.classList[window.innerWidth < 1260 ? 'remove' : 'add'](
+            'margin-right'
+        );
+    }
+
+    function hideExtraDetails() {
+        [
+            ...document.querySelectorAll('.nameAndUser'),
+            ...document.querySelectorAll('.filterType'),
+        ].map(el =>
+            el.classList[window.innerWidth > 900 ? 'remove' : 'add']('hidden')
+        );
+        left.classList[window.innerWidth < 900 ? 'remove' : 'add']('min-width');
+        middle.classList[window.innerWidth > 900 ? 'remove' : 'add']('width');
+    }
+
+    function hideFiltersAndUsers() {
+        const action = window.innerWidth > 780 ? 'remove' : 'add';
+        left.classList[action]('hidden');
+        right.classList[action]('hidden');
+    }
 
     function postTimeSorted() {
         msgs.sort(
             (a, b) =>
                 new Date(a.created_at).getTime() >
                     new Date(b.created_at).getTime() || -1
-        ).forEach(msg => postMsg(msgList, msg.msgElement));
+        ).forEach(msg => {
+            postMsg(msgList, msg);
+        });
     }
 
+    window.addEventListener('resize', setUserWrapper);
+
+    window.addEventListener('resize', hideExtraDetails);
+
+    window.addEventListener('resize', hideFiltersAndUsers);
+
+    const users = setUsers(data);
+
+    const msgs = getMsgs(data);
+
+    const msgList = document.getElementById('pius');
+
+    setUserWrapper();
+    hideExtraDetails();
     postTimeSorted();
 
     const textArea = document.getElementById('createPiuText');
@@ -54,12 +102,24 @@ async function getData() {
         favoritesButton.classList.remove('activated');
         msgs.forEach(msg => msg.msgElement.classList.remove('hidden'));
 
-        msgs.filter(msg => msg.username.includes(this.value)).forEach(msg =>
-            msg.msgElement.classList.remove('hidden')
-        );
-        msgs.filter(msg => !msg.username.includes(this.value)).forEach(msg =>
-            msg.msgElement.classList.add('hidden')
-        );
+        msgs.filter(
+            msg =>
+                msg.username.toLowerCase().includes(this.value.toLowerCase()) ||
+                msg.first_name
+                    .toLowerCase()
+                    .includes(this.value.toLowerCase()) ||
+                msg.last_name.toLowerCase().includes(this.value.toLowerCase())
+        ).forEach(msg => msg.msgElement.classList.remove('hidden'));
+        msgs.filter(
+            msg =>
+                !msg.username
+                    .toLowerCase()
+                    .includes(this.value.toLowerCase()) &&
+                !msg.first_name
+                    .toLowerCase()
+                    .includes(this.value.toLowerCase()) &&
+                !msg.last_name.toLowerCase().includes(this.value.toLowerCase())
+        ).forEach(msg => msg.msgElement.classList.add('hidden'));
     });
 
     document.getElementById('postPiu').addEventListener('click', function () {
@@ -75,11 +135,13 @@ async function getData() {
                 'images/UserAvatar.png',
                 'tiagolucio',
                 textArea.value,
-                new Date(),
-                new Date()
+                'Tiago',
+                'Lucio',
+                new Date() - 1000,
+                new Date() - 1000
             );
             msgs.push(myNewPiu);
-            postMsg(msgList, myNewPiu.msgElement);
+            postMsg(msgList, myNewPiu);
 
             clear();
             removeActivated();
@@ -137,7 +199,7 @@ async function getData() {
                     (a, b) =>
                         a.username.toLowerCase() < b.username.toLowerCase() ||
                         -1
-                ).forEach(msg => postMsg(msgList, msg.msgElement));
+                ).forEach(msg => postMsg(msgList, msg));
             } else clear(this);
         });
 
@@ -153,7 +215,7 @@ async function getData() {
                     (a, b) =>
                         a.username.toLowerCase() > b.username.toLowerCase() ||
                         -1
-                ).forEach(msg => postMsg(msgList, msg.msgElement));
+                ).forEach(msg => postMsg(msgList, msg));
             } else clear(this);
         });
 
@@ -164,7 +226,7 @@ async function getData() {
         if (this.classList.contains('activated')) {
             msgList.innerHTML = '';
             msgs.sort((a, b) => b.text.length > a.text.length || -1).forEach(
-                msg => postMsg(msgList, msg.msgElement)
+                msg => postMsg(msgList, msg)
             );
         } else clear(this);
     });
@@ -176,7 +238,7 @@ async function getData() {
         if (this.classList.contains('activated')) {
             msgList.innerHTML = '';
             msgs.sort((a, b) => a.text.length - b.text.length).forEach(msg =>
-                postMsg(msgList, msg.msgElement)
+                postMsg(msgList, msg)
             );
         } else clear(this);
     });
@@ -217,21 +279,75 @@ function getMsgs(data) {
     return data.map(msgData => {
         const {
             id: msgId,
-            user: { username, photo },
+            user: { username, first_name, last_name, photo },
             text,
             created_at,
             updated_at,
         } = msgData;
 
-        return createPiu(msgId, photo, username, text, created_at, updated_at);
+        return createPiu(
+            msgId,
+            photo,
+            username,
+            text,
+            first_name,
+            last_name,
+            created_at,
+            updated_at
+        );
     });
 }
 
-function postMsg(msgList, msg) {
+const getCreatedTime = created_at => {
+    const diff = new Date() - new Date(created_at);
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(days / 365);
+
+    if (days === 1) return 'Yesterday';
+    return `${years || months || days || hours || minutes || seconds || '0'} ${
+        years > 1
+            ? 'years'
+            : years === 1
+            ? 'year'
+            : months > 1
+            ? 'months'
+            : months === 1
+            ? 'month'
+            : days > 1
+            ? 'days'
+            : hours > 1
+            ? 'hours'
+            : hours === 1
+            ? 'hour'
+            : minutes > 1
+            ? 'minutes'
+            : minutes === 1
+            ? 'minute'
+            : seconds !== 1
+            ? 'seconds'
+            : 'second'
+    } ago`;
+};
+
+function postMsg(msgList, { msgElement: msg, created_at }) {
+    msg.querySelector('.createdTime').innerText = getCreatedTime(created_at);
     msgList.prepend(msg);
 }
 
-function createPiu(msgId, photo, username, text, created_at, updated_at) {
+function createPiu(
+    msgId,
+    photo,
+    username,
+    text,
+    first_name,
+    last_name,
+    created_at,
+    updated_at
+) {
     const msgElement = document.createElement('div');
     if (msgId) msgElement.id = msgId;
 
@@ -248,6 +364,7 @@ function createPiu(msgId, photo, username, text, created_at, updated_at) {
         </div>
         <div class="piuBox">
             <p class="piuText"></p>
+            <p class="createdTime">${getCreatedTime(created_at)}</p>
             <div class="reactions">
                 <div class="likeData">
                     <img
@@ -294,5 +411,13 @@ function createPiu(msgId, photo, username, text, created_at, updated_at) {
             this.classList.toggle('addedBookmark');
         });
 
-    return { msgElement, username, text, created_at, updated_at };
+    return {
+        msgElement,
+        username,
+        text,
+        first_name,
+        last_name,
+        created_at,
+        updated_at,
+    };
 }
