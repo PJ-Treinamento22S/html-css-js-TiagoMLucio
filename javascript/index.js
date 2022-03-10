@@ -102,8 +102,8 @@ async function getData() {
     function filterFavorites() {
         msgs.forEach(
             msg =>
-                msg.msgElement.querySelector('.addedBookmark') ||
-                msg.msgElement.classList.add('hidden')
+                msg.element.querySelector('.addedBookmark') ||
+                msg.element.classList.add('hidden')
         );
     }
 
@@ -166,8 +166,8 @@ async function getData() {
                 msg.first_name.toLowerCase().includes(searchContent) ||
                 msg.last_name.toLowerCase().includes(searchContent)
             )
-                msg.msgElement.classList.remove('hidden');
-            else msg.msgElement.classList.add('hidden');
+                msg.element.classList.remove('hidden');
+            else msg.element.classList.add('hidden');
         });
     }
 
@@ -240,7 +240,7 @@ async function getData() {
         this.classList.toggle('activated');
         if (this.classList.contains('activated')) filterFavorites();
         else {
-            msgs.forEach(msg => msg.msgElement.classList.remove('hidden'));
+            msgs.forEach(msg => msg.element.classList.remove('hidden'));
             filterSearch();
         }
     });
@@ -346,9 +346,10 @@ const getCreatedTime = created_at => {
     } ago`;
 };
 
-function postMsg(msgList, { msgElement: msg, created_at }) {
-    msg.querySelector('.createdTime').innerText = getCreatedTime(created_at);
-    msgList.prepend(msg);
+function postMsg(msgList, { element, created_at }) {
+    element.querySelector('.createdTime').innerText =
+        getCreatedTime(created_at);
+    msgList.prepend(element);
 }
 
 function createPiu(
@@ -361,12 +362,12 @@ function createPiu(
     created_at,
     updated_at
 ) {
-    const msgElement = document.createElement('div');
-    if (msgId) msgElement.id = msgId;
+    const element = document.createElement('div');
+    if (msgId) element.id = msgId;
 
-    msgElement.classList.add('piu');
+    element.classList.add('piu');
 
-    msgElement.innerHTML = `                    
+    element.innerHTML = `                    
         <div class="user">
             <img
                 src="${photo || '../images/Profile.svg'}"
@@ -400,9 +401,9 @@ function createPiu(
             </div>
         </div>`;
 
-    msgElement.querySelector('.piuText').innerText = text;
+    element.querySelector('.piuText').innerText = text;
 
-    msgElement.querySelector('.like').addEventListener('click', function () {
+    element.querySelector('.like').addEventListener('click', function () {
         let likes = this.nextElementSibling;
         if (this.classList.contains('addedLike')) {
             likes.innerText--;
@@ -414,18 +415,16 @@ function createPiu(
         this.classList.toggle('addedLike');
     });
 
-    msgElement
-        .querySelector('.bookmark')
-        .addEventListener('click', function () {
-            if (this.classList.contains('addedBookmark'))
-                this.src = '../images/BookmarkMsg.svg';
-            else this.src = '../images/RedBookmarkMsg.svg';
+    element.querySelector('.bookmark').addEventListener('click', function () {
+        if (this.classList.contains('addedBookmark'))
+            this.src = '../images/BookmarkMsg.svg';
+        else this.src = '../images/RedBookmarkMsg.svg';
 
-            this.classList.toggle('addedBookmark');
-        });
+        this.classList.toggle('addedBookmark');
+    });
 
     return {
-        msgElement,
+        element,
         username,
         text,
         first_name,
