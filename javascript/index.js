@@ -225,6 +225,7 @@ async function getData() {
         );
         msgs.push(myNewPiu);
         postMsg(msgList, myNewPiu);
+        orderTime();
         filterSearch();
         reorderAndFilter();
 
