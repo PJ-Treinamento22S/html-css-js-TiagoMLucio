@@ -1,25 +1,27 @@
 async function getData() {
-    /* Get the products information in a json type */
+    /* Get the messages information in a json type */
     const response = await fetch(
         'https://api.json-generator.com/templates/BQZ3wDrI6ts0/data?access_token=n7lhzp6uj5oi5goj0h2qify7mi2o8wrmebe3n5ad'
     );
 
     const data = await response.json();
 
+    /* Get Main Elements */
     const wrapper = document.getElementById('wrapper');
     const extraLeft = document.getElementById('extraLeft');
     const left = document.getElementById('left');
     const middle = document.getElementById('middle');
     const right = document.createElement('div');
 
+    /* Set Right (Users) Wrapper */
     right.id = 'right';
     right.innerHTML = `            
     <h2 class="sectionTitle">Usuários</h2>
     <ul id="userList">
     </ul>`;
-
     wrapper.append(right);
 
+    /* Responsiveness */
     function setUserWrapper() {
         (window.innerWidth < 1260 ? extraLeft : wrapper).append(right);
         middle.classList[window.innerWidth < 1260 ? 'remove' : 'add'](
@@ -44,7 +46,14 @@ async function getData() {
         right.classList[action]('hidden');
     }
 
-    function postTimeSorted() {
+    window.addEventListener('resize', setUserWrapper);
+
+    window.addEventListener('resize', hideExtraDetails);
+
+    window.addEventListener('resize', hideFiltersAndUsers);
+
+    /* Set Users and Post messages */
+    function orderTime() {
         msgs.sort(
             (a, b) =>
                 new Date(a.created_at).getTime() >
@@ -54,13 +63,7 @@ async function getData() {
         });
     }
 
-    window.addEventListener('resize', setUserWrapper);
-
-    window.addEventListener('resize', hideExtraDetails);
-
-    window.addEventListener('resize', hideFiltersAndUsers);
-
-    const users = setUsers(data);
+    setUsers(data);
 
     const msgs = getMsgs(data);
 
@@ -68,18 +71,116 @@ async function getData() {
 
     setUserWrapper();
     hideExtraDetails();
-    postTimeSorted();
+    orderTime();
 
+    /* Get Inputs/Buttons Elements */
     const textArea = document.getElementById('createPiuText');
 
     const search = document.getElementById('searchBar');
 
-    const characterElement = document.getElementById('wordCount');
+    const characterElement = document.getElementById('characterCount');
 
     const warningMsg = document.getElementById('warning');
 
-    const buttons = document.querySelectorAll('.ordering');
+    const favoritesButton = document.getElementById('favorites');
 
+    const orderingButtons = document.querySelectorAll('.ordering');
+
+    /* Pius and Buttons Functions */
+    function clear() {
+        msgList.innerHTML = '';
+        orderTime();
+    }
+
+    function removeActivated(currentButton) {
+        orderingButtons.forEach(
+            button =>
+                button !== currentButton && button.classList.remove('activated')
+        );
+    }
+
+    function filterFavorites() {
+        msgs.forEach(
+            msg =>
+                msg.msgElement.querySelector('.addedBookmark') ||
+                msg.msgElement.classList.add('hidden')
+        );
+    }
+
+    function orderUsernameAToZ() {
+        removeActivated(orderingButtons[0]);
+        msgList.innerHTML = '';
+        msgs.sort(
+            (a, b) => a.username.toLowerCase() < b.username.toLowerCase() || -1
+        ).forEach(msg => postMsg(msgList, msg));
+    }
+
+    function orderUsernameZToA() {
+        removeActivated(orderingButtons[1]);
+        msgList.innerHTML = '';
+        msgs.sort(
+            (a, b) => a.username.toLowerCase() > b.username.toLowerCase() || -1
+        ).forEach(msg => postMsg(msgList, msg));
+    }
+
+    function orderSize1To9() {
+        button = orderingButtons[2];
+        removeActivated(button);
+        msgList.innerHTML = '';
+        msgs.sort((a, b) => b.text.length > a.text.length || -1).forEach(msg =>
+            postMsg(msgList, msg)
+        );
+    }
+
+    function orderSize9To1() {
+        button = orderingButtons[3];
+        removeActivated(button);
+        msgList.innerHTML = '';
+        msgs.sort((a, b) => a.text.length - b.text.length).forEach(msg =>
+            postMsg(msgList, msg)
+        );
+    }
+
+    const buttonCallback = i => {
+        switch (i) {
+            case -1:
+                return filterFavorites;
+            case 0:
+                return orderUsernameAToZ;
+            case 1:
+                return orderUsernameZToA;
+            case 2:
+                return orderSize1To9;
+            case 3:
+                return orderSize9To1;
+            default:
+                return orderTime;
+        }
+    };
+
+    function filterSearch() {
+        const searchContent = searchBar.value.toLowerCase();
+        msgs.forEach(msg => {
+            if (
+                msg.username.toLowerCase().includes(searchContent) ||
+                msg.first_name.toLowerCase().includes(searchContent) ||
+                msg.last_name.toLowerCase().includes(searchContent)
+            )
+                msg.msgElement.classList.remove('hidden');
+            else msg.msgElement.classList.add('hidden');
+        });
+    }
+
+    function reorderAndFilter() {
+        if (favoritesButton.classList.contains('activated')) {
+            buttonCallback(-1)();
+        }
+        [...orderingButtons].findIndex((button, i) => {
+            if (button.classList.contains('activated')) buttonCallback(i)();
+        });
+    }
+
+    //Verify character count
     textArea.addEventListener('keyup', function () {
         const characterCount = this.value.length;
         characterElement.innerText = `${characterCount}/140`;
@@ -98,28 +199,8 @@ async function getData() {
 
     searchBar.addEventListener('keyup', function () {
         clear();
-        removeActivated();
-        favoritesButton.classList.remove('activated');
-        msgs.forEach(msg => msg.msgElement.classList.remove('hidden'));
-
-        msgs.filter(
-            msg =>
-                msg.username.toLowerCase().includes(this.value.toLowerCase()) ||
-                msg.first_name
-                    .toLowerCase()
-                    .includes(this.value.toLowerCase()) ||
-                msg.last_name.toLowerCase().includes(this.value.toLowerCase())
-        ).forEach(msg => msg.msgElement.classList.remove('hidden'));
-        msgs.filter(
-            msg =>
-                !msg.username
-                    .toLowerCase()
-                    .includes(this.value.toLowerCase()) &&
-                !msg.first_name
-                    .toLowerCase()
-                    .includes(this.value.toLowerCase()) &&
-                !msg.last_name.toLowerCase().includes(this.value.toLowerCase())
-        ).forEach(msg => msg.msgElement.classList.add('hidden'));
+        filterSearch();
+        reorderAndFilter();
     });
 
     document.getElementById('postPiu').addEventListener('click', function () {
@@ -129,132 +210,65 @@ async function getData() {
                 characterCount === 0 ? 'vazios' : 'com mais de 140 caracteres'
             }`;
             warningMsg.classList.remove('hidden');
-        } else {
-            myNewPiu = createPiu(
-                undefined,
-                '../images/UserAvatar.png',
-                'tiagolucio',
-                textArea.value,
-                'Tiago',
-                'Lucio',
-                new Date() - 1000,
-                new Date() - 1000
-            );
-            msgs.push(myNewPiu);
-            postMsg(msgList, myNewPiu);
-
-            clear();
-            removeActivated();
-            favoritesButton.classList.remove('activated');
-            msgs.forEach(msg => msg.msgElement.classList.remove('hidden'));
-            search.value = '';
-
-            textArea.value = '';
-            characterElement.innerText = `0/140`;
-            characterElement.classList.remove('green', 'yellow', 'red');
-            characterElement.classList.add('var(--gray)');
-            warningMsg.classList.add('hidden');
+            return;
         }
-    });
 
-    function clear(button) {
-        msgList.innerHTML = '';
-        postTimeSorted();
-        button?.classList.remove('activated');
-    }
-
-    function removeActivated(currentButton) {
-        buttons.forEach(
-            button =>
-                button !== currentButton && button.classList.remove('activated')
+        myNewPiu = createPiu(
+            undefined,
+            '../images/UserAvatar.png',
+            'tiagolucio',
+            textArea.value,
+            'Tiago',
+            'Lucio',
+            new Date() - 1000,
+            new Date() - 1000
         );
-    }
+        msgs.push(myNewPiu);
+        postMsg(msgList, myNewPiu);
+        filterSearch();
+        reorderAndFilter();
 
-    const favoritesButton = document.getElementById('favorites');
+        //Reset text elements
+        textArea.value = '';
+        characterElement.innerText = `0/140`;
+        characterElement.classList.remove('green', 'yellow', 'red');
+        characterElement.classList.add('var(--gray)');
+        warningMsg.classList.add('hidden');
+    });
 
     favoritesButton.addEventListener('click', function () {
         this.classList.toggle('activated');
-        if (this.classList.contains('activated'))
-            msgs.forEach(
-                msg =>
-                    msg.msgElement.querySelector('.addedBookmark') ||
-                    msg.msgElement.classList.add('hidden')
-            );
+        if (this.classList.contains('activated')) filterFavorites();
         else {
-            this.classList.remove('activated');
-            search.value = '';
             msgs.forEach(msg => msg.msgElement.classList.remove('hidden'));
+            filterSearch();
         }
     });
 
-    document
-        .getElementById('UsernameAToZ')
-        .addEventListener('click', function () {
+    orderingButtons.forEach((button, i) =>
+        button.addEventListener('click', function () {
             this.classList.toggle('activated');
-
-            if (this.classList.contains('activated')) {
-                removeActivated(this);
-                msgList.innerHTML = '';
-                msgs.sort(
-                    (a, b) =>
-                        a.username.toLowerCase() < b.username.toLowerCase() ||
-                        -1
-                ).forEach(msg => postMsg(msgList, msg));
-            } else clear(this);
-        });
-
-    document
-        .getElementById('UsernameZToA')
-        .addEventListener('click', function () {
-            removeActivated(this);
-            this.classList.toggle('activated');
-
-            if (this.classList.contains('activated')) {
-                msgList.innerHTML = '';
-                msgs.sort(
-                    (a, b) =>
-                        a.username.toLowerCase() > b.username.toLowerCase() ||
-                        -1
-                ).forEach(msg => postMsg(msgList, msg));
-            } else clear(this);
-        });
-
-    document.getElementById('Size1To9').addEventListener('click', function () {
-        removeActivated(this);
-        this.classList.toggle('activated');
-
-        if (this.classList.contains('activated')) {
-            msgList.innerHTML = '';
-            msgs.sort((a, b) => b.text.length > a.text.length || -1).forEach(
-                msg => postMsg(msgList, msg)
-            );
-        } else clear(this);
-    });
-
-    document.getElementById('Size9To1').addEventListener('click', function () {
-        removeActivated(this);
-        this.classList.toggle('activated');
-
-        if (this.classList.contains('activated')) {
-            msgList.innerHTML = '';
-            msgs.sort((a, b) => a.text.length - b.text.length).forEach(msg =>
-                postMsg(msgList, msg)
-            );
-        } else clear(this);
-    });
-    //     document.getElementById('clear').addEventListener('click', clear);
+            if (this.classList.contains('activated')) buttonCallback(i)();
+            else clear(this);
+        })
+    );
 }
 
 getData();
 
 function setUsers(data) {
+    const userList = document.getElementById('userList');
+
     return data
         .map(msgData => {
             const { id, username, first_name, last_name, photo } = msgData.user;
+
+            //User Already Exists
             if (document.getElementById(id)) return;
 
-            const userList = document.getElementById('userList');
             const userElement = document.createElement('li');
+
+            //Set Users
             userElement.id = id;
             userElement.innerHTML = `
                 <img
